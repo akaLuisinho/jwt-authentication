@@ -38,4 +38,16 @@ async function verify(email, password) {
     }
 }
 
-module.exports = { create, verify }
+async function findByEmail(email) {
+    const user = await knex('users')
+        .where('email', email)
+
+    return user
+}
+
+async function findAll() {
+    const users = await knex('users')
+
+    return users
+}
+module.exports = { create, verify, findByEmail, findAll }
