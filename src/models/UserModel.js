@@ -4,7 +4,6 @@ const { v4: uuid } = require('uuid')
 
 async function create(email, name, password) {
     const id = uuid();
-    console.log(id);
     const user = {
         id: id,
         email: email,
@@ -18,5 +17,25 @@ async function create(email, name, password) {
 
     return user
 }
+async function verify(email, password) {
+    const bdUser = await knex('users')
+        .where('email', email)
 
-module.exports = { create }
+    const user = {
+        ...bdUser[0]
+    }
+
+    if (!user.email) {
+        return 400
+    }
+
+    const passwdValidation = await bcrypt.compare(password, user.password)
+
+    if (passwdValidation) {
+        return user
+    } else {
+        return 401
+    }
+}
+
+module.exports = { create, verify }
